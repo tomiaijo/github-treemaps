@@ -225,6 +225,7 @@ githubTreemapsApp.run(function($rootScope, $state, StateService) {
 });
 
 githubTreemapsApp.controller('MainCtrl', function ($scope, $state, $rootScope, StateService, $http) {
+    $scope.$state = $state;
     $scope.reload = function() {
         $state.go($state.current, StateService.toParams, {reload: true});
     };

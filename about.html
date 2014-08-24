@@ -2,10 +2,17 @@
 
     <div class="row">
         <div class="col-md-9" role="main">
-            <h1>kas</h1>
+            <h1>Github Treemaps</h1>
 
-            <p class="lead">Get the lowdown on the key pieces of Bootstrap's infrastructure, including our approach to better, faster, stronger web development.</p>
+            <p class="lead">This is an experiment to visualize Github repositories as treemaps.</p>
 
+            <h2>How It Works</h2>
+            <p>There are two distinct components involved in creating these treemaps. The user interface is written in JavaScript using <a href="https://angularjs.org/">AngularJS</a>, and the treemaps are rendered with <a href="http://d3js.org/">D3.js</a>. The front end is cabable of rendering specially formatted JSON files that are generated from trees and commits of Github repositories. Currently commits, repository tree, and programming languages of a repository are visualized as treemaps. Some of these views are zoomable.</p>
+            <p>A backend service is in charge of pulling Github repositories and generating the statistics. It is written in Python and is using <a href="http://www.celeryproject.org/">Celery</a>, <a href="http://www.pygit2.org/">pygit2</a>, <a href="http://flask.pocoo.org/">Flask</a>, and <a href="http://www.sqlalchemy.org/">SQLAlchemy</a>.</p>
+            <p>Pulling and exploring Github repositories is not a light task. The backend is exploiting Amazon EC2 Spot Instances to process repositories. Still it is not realistic to summarize all repositories. Currently the most starred and forked repositories are automatically kept updated. In addition, there is a ability to queue a repository for indexing if not already indexed.</p>
+            <p>All the source code is available at <a href="https://github.com/tomiaijo/github-treemaps">Github</a>. If you run into problems, please leave a bug report on Github issues.</p>
+
+            <p>Created by <a href="http://tomiaijo.github.io/">Tomi Äijö</a>.</p>
         </div>
     </div>
 </div>
