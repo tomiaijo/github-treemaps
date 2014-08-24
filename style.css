@@ -1,0 +1,123 @@
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+svg {
+    display: block;
+    width: 100%;
+    margin: 10 auto;
+}
+
+rect {
+    fill: none
+}
+
+.navbar {
+    display: table-row
+}
+
+.content {
+    display: table-row;
+    height: 100%
+}
+
+.chart {
+    height: 100%
+}
+
+.repository {
+    height: 100%
+}
+
+#body {
+    display: table;
+    width: 100%;
+    height: 100%
+}
+
+html, body {
+    width: 100%;
+    height: 100%
+}
+
+.treemap-tooltip {
+    word-wrap: break-word;
+    word-break: break-word;
+    position: absolute;
+    width: 220px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}
+
+.nav .breadcrumb {
+    margin: 0 7px
+}
+
+@media (min-width: 768px) {
+    .nav .breadcrumb {
+        float: left;
+        margin: 7px 10px
+    }
+}
+
+.info-popover {
+    word-wrap: break-word;
+    word-break: break-word;
+    padding: 0px;
+    margin: 0px;
+}
+
+.glyphicon-refresh-animate {
+    -webkit-animation: spinner 2s linear;
+    -moz-animation: spinner 2s linear;
+    -o-animation: spinner 2s linear;
+    animation: spinner 2s linear;
+}
+
+@-webkit-keyframes spinner {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes spinner {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-o-keyframes spinner {
+    from {
+        -o-transform: rotate(0deg);
+    }
+    to {
+        -o-transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.alert-messages {
+    position: fixed;
+    width: 600px;
+    top: 55px;
+    margin-right: 10px;
+    right: 0;
+    z-index: 7000;
+}

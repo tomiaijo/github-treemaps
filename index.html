@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html ng-app="githubTreemaps" ng-controller="MainCtrl">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/octicons/2.0.2/octicons.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
+    <script src="ui-bootstrap-tpls.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.min.js"></script>
+    <script src="angular-ui-router.js"></script>
+    <script src="humanize.min.js"></script>
+    <script src="angular-breadcrumb.min.js"></script>
+    <script src="filemappings.js"></script>
+    <script src="controllers.js"></script>
+
+    <title ng-bind-template="{{pageTitle}} - Github Treemaps"></title>
+</head>
+
+<body>
+<div id="body">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+
+            <div class="navbar-header">
+                <button class="navbar-toggle" data-target="#navbar-collapse-target" data-toggle="collapse" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span></button>
+                <a class="navbar-brand" ui-sref="home">Github Treemaps</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse-target">
+
+                <p class="navbar-text navbar-left" popover-placement="bottom" popover-template="settingsTemplate.html"><span><i class="glyphicon glyphicon-cog"></i></span></p>
+                <p ng-click="reload()" class="navbar-text navbar-left"><span><i class="glyphicon glyphicon-refresh"></i></span></p>
+
+                <ul class="nav navbar-nav">
+                    <li ng-class="{active: $state.includes('about')}"><a ui-sref="about">About</a></li>
+                </ul>
+
+                <form ng-controller="SearchCtrl" class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="customSelected" typeahead-loading="loadingRepositories" placeholder="Search" typeahead-min-length="2" typeahead-wait-ms="100" typeahead="repo as repo.name for repo in getRepository($viewValue)"  typeahead-template-url="searchTemplate.html" typeahead-on-select="onSelect($item, $model, $label)">
+                    </div>
+                </form>
+
+                <div ncy-breadcrumb></div>
+
+                <form ng-controller="SummandsCtrl" ng-show="summands.length" class="navbar-form navbar-right">
+                    <div class="form-group btn-group">
+                        <label ng-repeat="s in summands" ng-model="$parent.chosenSummand" btn-radio="s|lowercase" class="btn btn-primary">
+                            {{s}}
+                        </label>
+                    </div>
+                </form>
+                <form ng-controller="GroupingCtrl" ng-show="groupings.length" class="navbar-form navbar-right">
+                    <div class="form-group btn-group">
+                        <label ng-repeat="g in groupings" ng-model="$parent.chosenGrouping" btn-radio="g" class="btn btn-primary">
+                            {{g}}
+                        </label>
+                    </div>
+                </form>
+
+                <div ng-controller="InfoCtrl">
+                    <p ng-show="infos.length > 0" style="margin-right: 5px;" class="navbar-text navbar-right" popover-placement="bottom" popover-template="infoTemplate.html"><span><i class="glyphicon glyphicon-info-sign"></i></span></p>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{{info_link}}">{{info_name}}</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+    <div class="alert-messages" ng-controller="AlertCtrl" ng-show="alerts.length > 0">
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    </div>
+    <div class="content" ui-view></div>v>
+    </div>
+</div>
+
+<div id="tooltip-committer" class="list-group treemap-tooltip hidden">
+    <div class="list-group-item active">
+        <h4 id="committer-committer" class="list-group-item-heading"></h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Commits</h4>
+        <p id="committer-commits" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Lines</h4>
+        <p id="committer-totalLines" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Additions</h4>
+        <p id="committer-totalAdditions" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Deletions</h4>
+        <p id="committer-totalDeletions" class="list-group-item-text"></p>
+    </div>
+</div>
+<div id="tooltip-commit" class="list-group treemap-tooltip hidden">
+    <div class="list-group-item active">
+        <h4 id="commit-hash" class="list-group-item-heading"></h4>
+        <p id="commit-time" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Lines</h4>
+        <p id="commit-lines" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Additions</h4>
+        <p id="commit-additions" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Deletions</h4>
+        <p id="commit-deletions" class="list-group-item-text"></p>
+    </div>
+</div>
+<div id="tooltip-commit-file" class="list-group treemap-tooltip hidden">
+    <div class="list-group-item active">
+        <h4 id="commit-file-name" class="list-group-item-heading"></h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Lines</h4>
+        <p id="commit-file-lines" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Additions</h4>
+        <p id="commit-file-additions" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Deletions</h4>
+        <p id="commit-file-deletions" class="list-group-item-text"></p>
+    </div>
+</div>
+<div id="tooltip-tree" class="list-group treemap-tooltip hidden">
+    <div class="list-group-item active">
+        <h4 id="tree-name" class="list-group-item-heading"></h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Size</h4>
+        <p id="tree-size" class="list-group-item-text"></p>
+    </div>
+</div>
+<div id="tooltip-language" class="list-group treemap-tooltip hidden">
+    <div class="list-group-item active">
+        <h4 id="language-name" class="list-group-item-heading"></h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Size</h4>
+        <p id="language-size" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Files</h4>
+        <p id="language-files" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item ">
+        <h4 class="list-group-item-heading">File</h4>
+        <p id="language-file" class="list-group-item-text"></p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">Size</h4>
+        <p id="language-file-size" class="list-group-item-text"></p>
+    </div>
+</div>
+<script type="text/ng-template" id="searchTemplate.html">
+    <a>
+        <span ng-show="match.model.version" class="glyphicon glyphicon-ok"></span>
+        <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
+        <small>{{match.model.description}}</small>
+    </a>
+</script>
+<script type="text/ng-template" id="settingsTemplate.html">
+    <div ng-controller="SettingsCtrl">
+        <form class="form-inline" role="form">
+            <div class="form-group form-group-sm">
+                <label>Color mode:</label>
+                <div class="btn-group">
+                    <label class="btn btn-primary" title="Inherit color from ancestor" ng-model="colorMode.mode" btn-radio="'Ancestor'">Ancestor</label>
+                    <label class="btn btn-primary" title="Inherit color from parent" ng-model="colorMode.mode" btn-radio="'Parent'">Parent</label>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+<script type="text/ng-template" id="infoTemplate.html">
+<div class="list-group info-popover">
+        <a class="list-group-item active" href="{{info_link}}">
+            <h4 id="info-name" class="list-group-item-heading">{{info_name}}</h4>
+        </a>
+        <div ng-repeat="info in infos" class="list-group-item">
+            <h4 class="list-group-item-heading">{{info.heading}}</h4>
+            <p id="info-size" class="list-group-item-text">{{info.value}}</p>
+        </div>
+    </div>
+</script>
+</body>
+</html>
