@@ -130,6 +130,6 @@ function getProgrammingLanguage(filename) {
     if (fileExtension in fileEndingToLanguage) {
         return fileEndingToLanguage[fileExtension];
     }
-    console.log("Unknown: ", fileExtension)
+
     return 'Unknown';
 }
