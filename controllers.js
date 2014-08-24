@@ -359,7 +359,6 @@ githubTreemapsApp.controller('SearchCtrl', function($scope, $http, $state, loadi
 githubTreemapsApp.controller('BreadcrumbCtrl', function($scope, $state) {
     $scope.breadcrumbs = [];
     $scope.getBreadcrumbs = function() {
-        //return $state.current.data.breadcrumbs;
         return $scope.breadcrumbs;
     };
 });
