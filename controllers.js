@@ -909,7 +909,8 @@ githubTreemapsApp.controller('GroupingCtrl', function ($scope, GroupingService) 
 
 githubTreemapsApp.service('JSONService', function($http, $state) {
     this.getAndFlatten = function(json, dataToHierarchicalTree) {
-        return $http.get('http://d2kedfdzrv5j4k.cloudfront.net/' + json + '.gz')
+        var gzExtension = gzipEnabled ? '.gz' : '';
+        return $http.get('http://d2kedfdzrv5j4k.cloudfront.net/' + json + gzExtension)
                 .then(function (data) {
                     return dataToHierarchicalTree(data.data);
                 }, function (error) {
