@@ -372,7 +372,7 @@ githubTreemapsApp.controller('RepositoryNotIndexedCtrl', function ($scope, repos
         $http.post('http://github-treemap-api.elasticbeanstalk.com/queue/' + repositoryId)
             .then(function(response)
             {
-                if (response.status == 204) {
+                if (response.status == 201) {
                     AlertService.addAlert({msg: 'Successfully queued repository ' + $scope.name + " for indexing", type: 'success'});
                 } else {
                     AlertService.addAlert({msg: 'Failed to queue repository ' + $scope.name + " for indexing, try again later", type: 'danger'});
