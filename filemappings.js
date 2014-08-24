@@ -14,6 +14,7 @@ var fileEndingToLanguage =
     'coffee': 'CoffeeScript',
     'cpp': 'C++',
     'cs': 'C#',
+    'csv': 'Comma Separated Value',
     'css': 'CSS',
     'cxx': 'C++',
     'd': 'd',
