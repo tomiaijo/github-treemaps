@@ -204,7 +204,6 @@ githubTreemapsApp.run(function($rootScope, $state, StateService) {
         StateService.toParams = toParams;
         StateService.fromState = fromState;
         StateService.fromParams = fromParams;
-        console.log(toState)
         // State 'repository' should be abstract but can't to in order
         // to get a breadcrumb, forward automatically to 'repository.commits'
         if ($state.current.name == "repository") {
@@ -266,7 +265,6 @@ githubTreemapsApp.controller('BreadCrumbCtrl', function ($scope, $rootScope) {
     $rootScope.$on('$stateChangeSuccess',
         function(event, toState, toParams, fromState, fromParams) {
             $scope.breadCrumbs = toState.data.breadcrumbs;
-            console.log($scope.breadcrumbs)
     });
 });
 
@@ -274,7 +272,6 @@ githubTreemapsApp.controller('AlertCtrl', function($scope) {
     $scope.alerts = [];
 
     $scope.addAlert = function(alert) {
-        console.log("tuli", alert)
         $scope.alerts.push(alert);
     };
 
@@ -287,7 +284,6 @@ githubTreemapsApp.controller('AlertCtrl', function($scope) {
 
 githubTreemapsApp.service('AlertService', function ($rootScope) {
     this.addAlert = function(alert) {
-        console.log("Adding alert", alert)
         $rootScope.$broadcast('alert_added', alert);
     };
 });
@@ -336,12 +332,7 @@ githubTreemapsApp.service('SettingsService', function () {
 githubTreemapsApp.controller('SearchCtrl', function($scope, $http, $state, loadingIconService) {
 
     $scope.onSelect = function ($item, $model, $label) {
-        $state.go('repository.commits', {'id': $item.id})
-        //$(("#search-input")).value = '';
-
-        console.log($item);
-        console.log($model);
-        console.log($label);
+        $state.go('repository.commits', {'id': $item.id});
         $scope.customSelected = "";
 
     };
@@ -402,7 +393,6 @@ githubTreemapsApp.controller('RepositoryCtrl', function (repositoryId, repositor
     $scope.name = repositoryInfo.name;
     $scope.TreemapService = TreemapService;
     $scope.commitsToHierarchicalTree = function (data) {
-        console.log("nyt on", data)
         var commits = {};
         var totalCommitCount = 0;
         for (var commit in data.commits) {
@@ -572,7 +562,6 @@ githubTreemapsApp.controller('RepositoryCtrl', function (repositoryId, repositor
         }
 
         if (toState.name == "repository.commits" || toState.name == "repository.commits.committer") {
-            console.log("updating infos")
             $scope.updateInfos();
         }
     });
@@ -606,7 +595,6 @@ githubTreemapsApp.controller('RepositoryTreeCtrl', function (repositoryId, repos
                             curI['allow_zoom'] = false;
                             curI['files'] = 1;
                             files += 1;
-                            console.log(getProgrammingLanguage(i));
                         } else {
                             curI['allow_zoom'] = true;
                             curI['next_state'] = "repository.tree.zoom";
@@ -657,7 +645,6 @@ githubTreemapsApp.controller('RepositoryTreeCtrl', function (repositoryId, repos
 
         var i = 0;
         var curNode = $scope.data;
-        console.log("data", $scope.data)
         while (true) {
             var found = false;
             for (var j = 0; j < curNode.children.length; ++j) {
@@ -710,17 +697,13 @@ githubTreemapsApp.controller('RepositoryTreeCtrl', function (repositoryId, repos
             TreemapService.zoomOut();
         } else if (fromState.name == "repository.tree.zoom" &&
                    toState.name == "repository.tree.zoom") {
-            console.log(toParams)
-            console.log(fromParams)
             if (fromParams.path && toParams.path && fromParams.path.indexOf(toParams.path) == 0) {
                 var howManyStepsUp = fromParams.path.replace(toParams.path, '').split("/").length - 1;
-                console.log(howManyStepsUp)
                 for (var i = 0; i < howManyStepsUp; ++i) {
                     TreemapService.zoomUp();
                 }
             } else if (fromParams.path && toParams.path && toParams.path.indexOf(fromParams.path) == 0) {
                 var stepsDown = toParams.path.replace(fromParams.path, '').split("/");
-                console.log(stepsDown)
                 for (var i = 0; i < stepsDown.length; ++i) {
                     TreemapService.zoomTo("/" + stepsDown[i]);
                 }
@@ -745,7 +728,6 @@ githubTreemapsApp.controller('RepositoryTreeCtrl', function (repositoryId, repos
         } else if (fromState.name == "repository.tree" &&
                    toState.name == "repository.tree.zoom") {
             var stepsDown = toParams.path.replace(fromParams.path, '').split("/");
-            console.log(stepsDown)
             for (var i = 0; i < stepsDown.length; ++i) {
                 TreemapService.zoomTo("/" + stepsDown[i]);
             }
@@ -767,7 +749,6 @@ githubTreemapsApp.controller('CommitCtrl', function (repositoryId, repositoryInf
         var additions = 0;
         var deletions = 0;
         var files = [];
-        console.log(data)
         var commit = data.commits[$scope.commitId];
         for (var f in commit.files) {
             if (commit.files.hasOwnProperty(f)) {
@@ -879,7 +860,6 @@ githubTreemapsApp.controller('LanguageCtrl', function (repositoryId, repositoryI
 
 githubTreemapsApp.controller('SummandsCtrl', function ($scope, SummandService) {
     $scope.setSummand = function (summand) {
-        console.log("set summand=", summand)
         $scope.chosenSummand = summand.toLowerCase();
         SummandService.summandChanged($scope.chosenSummand);
     };
@@ -889,12 +869,10 @@ githubTreemapsApp.controller('SummandsCtrl', function ($scope, SummandService) {
             if (summands) {
                 $scope.summands = summands;
                 if (summands.length > 0) {
-                    console.log("Setting ", summands[0])
                     if (summands[0] != $scope.chosenSummand) {
                         $scope.chosenSummand = summands[0].toLowerCase();
                     }
                 }
-                console.log("updated summands")
             }
         }
     );
@@ -908,20 +886,17 @@ githubTreemapsApp.controller('GroupingCtrl', function ($scope, GroupingService) 
     $scope.ignoreNextUpdate = false;
     $scope.$on('groupings_updated',
         function (event, args) {
-            console.log(args)
             $scope.groupings = args['groupings'];
             if (args['defaultGrouping']) {
                 if (args['defaultGrouping'] != $scope.chosenGrouping) {
                     $scope.ignoreNextUpdate = true;
                     $scope.chosenGrouping = args['defaultGrouping'];
-                    console.log($scope.chosenGrouping)
                 }
             }
         }
     );
 
     $scope.$watch('chosenGrouping', function (newValue, oldValue) {
-        console.log("kas:", oldValue, "->", newValue)
         if ($scope.ignoreNextUpdate) {
             $scope.ignoreNextUpdate = false;
             return;
@@ -975,8 +950,6 @@ githubTreemapsApp.service('StateService', function ($rootScope) {
 githubTreemapsApp.service('PathService', function ($state, $rootScope, $location) {
 
     this.mustGoDeeper = function (next_state, key, value) {
-        console.log("Go state: " + next_state)
-        console.log("args: " + key + ":" + value)
         var variable = {}
         variable[key] = value;
         $rootScope.$apply(function() { $state.go(next_state, variable) });;
@@ -1016,9 +989,7 @@ githubTreemapsApp.service('GroupingService', function ($rootScope, $state, loadi
     var thisService =
         {
             groupingChanged: function (grouping) {
-                console.log("GroupingService: changing state")
                 var toState = $state.current.data.groupToStateMapping[grouping];
-                console.log(toState)
                 if (toState) {
                     loadingIconService.start_animation();
                     _.defer(function() {$rootScope.$apply(function() { $state.go(toState); })});
@@ -1045,7 +1016,6 @@ githubTreemapsApp.service('TreemapService', function ($rootScope, $state, $filte
         rootNode: null,
         svg: null,
         draw: function (data_json, zoomLevel) {
-            console.log("Drawing treemap");
             function get_size_function() {
                 return function (row) {
                     var summand = SummandService.getCurrentSummand();
@@ -1113,7 +1083,6 @@ githubTreemapsApp.service('TreemapService', function ($rootScope, $state, $filte
 
                                 var tooltipSize = thisService.hiddenElementSize($state.current.data.tooltipId);
                                 if (tooltipSize.height == 0) {
-                                    console.log(tooltipSize)
                                     return;
                                 }
                                 xPosition = Math.min(window.innerWidth - tooltipSize.width - 10, xPosition);
@@ -1148,7 +1117,6 @@ githubTreemapsApp.service('TreemapService', function ($rootScope, $state, $filte
                                 thisService.zoomTo(id);
                             }
 
-                            console.log("Stopping")
                         });
                     });
                 });
@@ -1177,7 +1145,6 @@ githubTreemapsApp.service('TreemapService', function ($rootScope, $state, $filte
         zoom: function (d) {
 
                 thisService.currentNode = d;
-                console.log("Zoom to", d)
                 var kx = thisService.w / d.dx,
                     ky = thisService.h / d.dy;
                 thisService.x.domain([d.x, d.x + d.dx]);
