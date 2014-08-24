@@ -82,7 +82,7 @@
     <div class="alert-messages" ng-controller="AlertCtrl" ng-show="alerts.length > 0">
         <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
     </div>
-    <div class="content" ui-view></div>v>
+    <div class="content" ui-view></div>
     </div>
 </div>
 
