@@ -49,7 +49,7 @@
 
                 <form ng-controller="SearchCtrl" class="navbar-form navbar-left" role="search">
                     <div class="form-group">
-                        <input type="text" class="form-control" ng-model="customSelected" typeahead-loading="loadingRepositories" placeholder="Search" typeahead-min-length="2" typeahead-wait-ms="100" typeahead="repo as repo.name for repo in getRepository($viewValue)"  typeahead-template-url="searchTemplate.html" typeahead-on-select="onSelect($item, $model, $label)">
+                        <input type="text" class="form-control" ng-model="customSelected" typeahead-loading="loadingRepositories" placeholder="Search" typeahead-min-length="2" typeahead-wait-ms="300" typeahead="repo as repo.name for repo in getRepository($viewValue)"  typeahead-template-url="searchTemplate.html" typeahead-on-select="onSelect($item, $model, $label)">
                     </div>
                 </form>
 
