@@ -53,6 +53,7 @@ var fileEndingToLanguage =
     'hxx': 'C++',
     'ico': 'Icon',
     'java': 'Java',
+    'jar': 'Java Archive',
     'jl': 'Julia',
     'jpg': 'JPEG',
     'jpeg': 'JPEG',
