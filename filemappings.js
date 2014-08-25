@@ -79,6 +79,7 @@ var fileEndingToLanguage =
     'php5': 'PHP',
     'phps': 'PHP',
     'phtml': 'PHP',
+    'perl': 'Perl',
     'pl': 'Perl',
     'po': 'Translation',
     'png': "PNG",
