@@ -1107,8 +1107,10 @@ githubTreemapsApp.service('TreemapService', function ($rootScope, $state, $filte
                         }).style("fill", thisService.generateColor);
 
                         $rootScope.$on('current_summand_updated', function (value) {
-                            treemap.value(get_size_function()).nodes(thisService.rootNode);
-                            thisService.zoom(thisService.currentNode);
+                            if (thisService.rootNode) {
+                                treemap.value(get_size_function()).nodes(thisService.rootNode);
+                                thisService.zoom(thisService.currentNode);
+                            }
 
                         });
 
