@@ -1044,6 +1044,9 @@ githubTreemapsApp.service('TreemapService', function ($rootScope, $state, $filte
         rootNode: null,
         svg: null,
         draw: function (data_json, zoomLevel) {
+            if (!data_json) {
+                return;
+            }
             function get_size_function() {
                 return function (row) {
                     var summand = SummandService.getCurrentSummand();
