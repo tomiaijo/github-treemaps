@@ -626,7 +626,7 @@ githubTreemapsApp.controller('RepositoryTreeCtrl', function (repositoryId, repos
         loadingIconService.start_animation();
         if (StateService.toState != null && StateService.toState.name == "repository.tree.zoom") {
             var pathParts = StateService.toParams.path.split("/");
-            JSONService.getAndFlatten($scope.id + "-files.json", $scope.filesToHierarchicalTree)
+            JSONService.getAndFlatten($scope.version + "-" + $scope.id + "-files.json", $scope.filesToHierarchicalTree)
                 .then(function(data) {
                     $scope.TreemapService.draw(data, _.map(pathParts.slice(1), function(i){ return "/" + i; }));
                     loadingIconService.stop_animation();
