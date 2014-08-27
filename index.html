@@ -70,6 +70,8 @@
                     </div>
                 </form>
 
+                <p ng-show="$state.current.data.isZoomable" ng-click="zoomOut()" class="navbar-text navbar-right"><span><i class="glyphicon glyphicon-zoom-out"></i></span></p>
+
                 <div ng-controller="InfoCtrl">
                     <p ng-show="infos.length > 0" style="margin-right: 5px;" class="navbar-text navbar-right" popover-placement="bottom" popover-template="infoTemplate.html"><span><i class="glyphicon glyphicon-info-sign"></i></span></p>
                     <ul class="nav navbar-nav navbar-right">

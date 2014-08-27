@@ -17,7 +17,8 @@ githubTreemapsApp.config(function ($stateProvider, $urlRouterProvider, $location
                 groupings: [],
                 groupToStateMapping: {},
                 title: "Main",
-                ncyBreadcrumbLabel: "Home"
+                ncyBreadcrumbLabel: "Home",
+                isZoomable: false
             }
         })
         .state('about', {
@@ -90,7 +91,20 @@ githubTreemapsApp.config(function ($stateProvider, $urlRouterProvider, $location
             }
         })
         .state('repository.tree.zoom', {
-            url: "{path:.*}"
+            url: "{path:.*}",
+            data: {
+                isZoomable: true,
+                zoomOutState: 'repository.tree.zoom',
+                zoomOutParams: function (currentParams) {
+                    var pathParts = currentParams.path.split('/');
+
+                    pathParts.pop();
+                    pathParts.shift();
+                    return  {id: currentParams.id, path: _.reduce(pathParts, function (part, memo) {
+                        return part + "/" + memo;
+                    }, "")};
+                }
+            }
         })
         .state('repository.commits', {
             url: "/commits",
@@ -133,7 +147,10 @@ githubTreemapsApp.config(function ($stateProvider, $urlRouterProvider, $location
                         .text(moment(new Date(d['time']*1000)).fromNow());
 
                 },
-                ncyBreadcrumbSkip: true
+                ncyBreadcrumbSkip: true,
+                isZoomable: true,
+                zoomOutState: 'repository.commits',
+                zoomOutParams: function(currentParams) {return {id: currentParams.id}; }
             }
 
         })
@@ -166,7 +183,11 @@ githubTreemapsApp.config(function ($stateProvider, $urlRouterProvider, $location
                         .text(d['deletions']);
                 },
                 title: "Repository Commit",
-                ncyBreadcrumbLabel: '{{commitId.substr(0, 16)}}'
+                ncyBreadcrumbLabel: '{{commitId.substr(0, 16)}}',
+                isZoomable: true,
+                zoomOutState: 'repository.commits',
+                zoomOutParams: function(currentParams) {return {id: currentParams.id}; }
+
             }
         })
         .state('repository.languages', {
@@ -229,6 +250,12 @@ githubTreemapsApp.controller('MainCtrl', function ($scope, $state, $rootScope, S
     $scope.reload = function() {
         $state.go($state.current, StateService.toParams, {reload: true});
     };
+
+    $scope.zoomOut = function() {
+        if ($state.current.data.isZoomable) {
+            $state.go($state.current.data.zoomOutState, $state.current.data.zoomOutParams(StateService.toParams));
+        }
+    }
 
     $rootScope.$on('$stateChangeSuccess',
         function(event, toState, toParams, fromState, fromParams) {
